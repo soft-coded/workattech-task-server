@@ -1,5 +1,7 @@
+require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
+const { connect } = require("mongoose");
 
 const router = require("./routes");
 const { CustomError, handleError } = require("./utils/error-handler");
@@ -9,6 +11,13 @@ const app = express();
 // app setup
 app.use(cors());
 app.use(express.json());
+
+connect(process.env.DB_URL)
+	.then(() => console.log("Connected to database"))
+	.catch(err => {
+		console.error(err);
+		process.exit(-1);
+	});
 
 // routing
 app.use(router);
