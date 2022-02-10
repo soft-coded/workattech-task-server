@@ -2,7 +2,20 @@ const asyncHandler = require("express-async-handler");
 const fetch = require("node-fetch");
 
 const constants = require("../utils/constants");
-const Developer = require("../model/dev-profile");
+const Developer = require("../models/dev-profile");
+
+const getAllDevs = asyncHandler(async (_, res) => {
+	const devs = await Developer.find({}, "id avatar_url -_id").lean();
+	res.status(200).json(devs);
+});
+
+const getOneDev = asyncHandler(async (req, res) => {
+	const dev = await Developer.findOne(
+		{ id: req.params.id },
+		"-_id -__v"
+	).lean();
+	res.status(200).json(dev);
+});
 
 const createDev = asyncHandler(async (req, res) => {
 	const githubData = await (
@@ -46,6 +59,14 @@ const createDev = asyncHandler(async (req, res) => {
 	res.status(201).json({ id: githubData.login });
 });
 
+const deleteDev = asyncHandler(async (req, res) => {
+	await Developer.deleteOne({ id: req.params.id });
+	res.sendStatus(204);
+});
+
 module.exports = {
-	createDev
+	createDev,
+	getAllDevs,
+	getOneDev,
+	deleteDev
 };
