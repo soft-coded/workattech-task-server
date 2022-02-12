@@ -9,7 +9,15 @@ const { CustomError, handleError } = require("./utils/error-handler");
 const app = express();
 
 // app setup
-app.use(cors());
+const whitelist = [process.env.WEBSITE_URL, "http://localhost:3000"];
+app.use(
+	cors({
+		origin: (origin, cb) =>
+			whitelist.indexOf(origin) > -1
+				? cb(null, true)
+				: cb(new Error("Not allowed by CORS"))
+	})
+);
 app.use(express.json());
 
 connect(process.env.DB_URL)
