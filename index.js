@@ -13,7 +13,7 @@ const whitelist = [process.env.WEBSITE_URL, "http://localhost:3000"];
 app.use(
 	cors({
 		origin: (origin, cb) =>
-			whitelist.indexOf(origin) > -1
+			!origin || whitelist.indexOf(origin) > -1
 				? cb(null, true)
 				: cb(new Error("Not allowed by CORS"))
 	})
